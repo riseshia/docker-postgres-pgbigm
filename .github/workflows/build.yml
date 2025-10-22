@@ -71,9 +71,9 @@ jobs:
 
       - name: Upload digest
         if: github.event_name != 'pull_request'
-        uses: actions/upload-artifact@ea165f6e4cfa22c0bb7d93f2ab66d7c0c26b3142 # v4.6.0
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
-          name: digests-${{ matrix.pg_version }}-${{ strategy.job-index }}
+          name: digests-${{ matrix.pg_version }}-${{ matrix.platform == 'linux/amd64' && 'amd64' || 'arm64' }}
           path: /tmp/digests/*
           if-no-files-found: error
           retention-days: 1
@@ -90,7 +90,7 @@ jobs:
         pg_version: ['16.6', '16.8', '16.9', '17.4', '17.5']
     steps:
       - name: Download digests
-        uses: actions/download-artifact@d9e8cd73079f4c180bf9ca65c77c850ad1fd7c0f # v4.2.0
+        uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
         with:
           pattern: digests-${{ matrix.pg_version }}-*
           merge-multiple: true
