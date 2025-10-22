@@ -1,5 +1,5 @@
 ARG PG_VERSION=17
-FROM postgres:${PG_VERSION}
+FROM postgres:${PG_VERSION} AS builder
 
 ARG PGBIGM_VERSION=1.2-20250903
 
@@ -27,3 +27,12 @@ RUN set -eux; \
         libicu-dev \
     ; \
     rm -rf /var/lib/apt/lists/*
+
+FROM postgres:${PG_VERSION}
+
+ENV LANG=en_US.utf8
+
+COPY --from=builder /usr/lib/postgresql/$PG_MAJOR/lib/* /usr/lib/postgresql/$PG_MAJOR/lib/
+COPY --from=builder /usr/share/postgresql/$PG_MAJOR/extension/* /usr/share/postgresql/$PG_MAJOR/extension/
+
+COPY init.sql /docker-entrypoint-initdb.d/
