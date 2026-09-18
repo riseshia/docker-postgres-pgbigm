@@ -32,7 +32,12 @@ FROM postgres:${PG_VERSION}
 
 ENV LANG=en_US.utf8
 
-COPY --from=builder /usr/lib/postgresql/$PG_MAJOR/lib/* /usr/lib/postgresql/$PG_MAJOR/lib/
-COPY --from=builder /usr/share/postgresql/$PG_MAJOR/extension/* /usr/share/postgresql/$PG_MAJOR/extension/
+# Copy only the pg_bigm artifacts. Installing postgresql-server-dev in the builder upgrades the
+# server packages to the latest minor release, so copying the whole lib directory would replace
+# the base image's modules with ones built for another minor (e.g. an llvmjit.so linked against
+# an LLVM version the base image does not ship, which breaks every JIT-compiled query).
+# The bitcode is left out for the same reason: it is produced by the builder's newer clang.
+COPY --from=builder /usr/lib/postgresql/$PG_MAJOR/lib/pg_bigm.so /usr/lib/postgresql/$PG_MAJOR/lib/
+COPY --from=builder /usr/share/postgresql/$PG_MAJOR/extension/pg_bigm* /usr/share/postgresql/$PG_MAJOR/extension/
 
 COPY init.sql /docker-entrypoint-initdb.d/
