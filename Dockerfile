@@ -32,7 +32,7 @@ FROM postgres:${PG_VERSION}
 
 ENV LANG=en_US.utf8
 
-COPY --from=builder /usr/lib/postgresql/$PG_MAJOR/lib/* /usr/lib/postgresql/$PG_MAJOR/lib/
-COPY --from=builder /usr/share/postgresql/$PG_MAJOR/extension/* /usr/share/postgresql/$PG_MAJOR/extension/
+COPY --from=builder /usr/lib/postgresql/$PG_MAJOR/lib/pg_bigm.so /usr/lib/postgresql/$PG_MAJOR/lib/
+COPY --from=builder /usr/share/postgresql/$PG_MAJOR/extension/pg_bigm* /usr/share/postgresql/$PG_MAJOR/extension/
 
 COPY init.sql /docker-entrypoint-initdb.d/
